@@ -13,20 +13,17 @@ import {
   faCog
 } from '@fortawesome/free-solid-svg-icons'
 
-class Dock extends Component {
-  state = {
-    routes: [
-      { title: 'patient', icon: faUsers, route: '/patient' },
-      { title: 'study', icon: faFileInvoice, route: '/study' },
-      { title: 'series', icon: faCopy, route: '/series' },
-      { title: 'instance', icon: faImage, route: '/instance' },
-      { title: 'region', icon: faTable, route: '/region' },
-      { title: 'settings', icon: faCog, route: '/settings' }
-    ]
-  }
+const routes = [
+  { title: 'patient', icon: faUsers, route: '/patient' },
+  { title: 'study', icon: faFileInvoice, route: '/study' },
+  { title: 'series', icon: faCopy, route: '/series' },
+  { title: 'instance', icon: faImage, route: '/instance' },
+  { title: 'region', icon: faTable, route: '/region' },
+  { title: 'settings', icon: faCog, route: '/settings' }
+]
 
+class Dock extends Component {
   render() {
-    const { routes } = this.state
     return (
       <Div>
         {routes.map((r, index) => (

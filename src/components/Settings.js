@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import styled from 'styled-components'
 import '../styles/Settings.css'
+import Alert from 'react-s-alert'
 
 const settings = window.require('electron-settings')
 const { Pool } = window.require('pg')
@@ -13,9 +13,7 @@ class Settings extends Component {
       database: '',
       password: '',
       port: ''
-    },
-    connSuccess: null,
-    message: ''
+    }
   }
 
   updateParameters = param => {
@@ -38,6 +36,11 @@ class Settings extends Component {
     })
   }
 
+  redirectToHome = () => {
+    const { history } = this.props
+    history.push('/')
+  }
+
   testConnection = () => {
     const { connParameters } = this.state
     const pool = new Pool(connParameters)
@@ -46,27 +49,24 @@ class Settings extends Component {
       FROM information_schema.tables
       WHERE table_schema = 'med_img'`,
       (err, res) => {
-        if (err)
-          this.setState({
-            connSuccess: false,
-            message: err.message
-          })
+        // if there's an error
+        if (err) Alert.error(err.message)
         else {
           const tables = res.rows
             .map(e => e.tables)
             .sort()
             .join(',')
+          // if the database has the required tables
           if (tables === 'instance,patient,region,series,study') {
-            this.setState({
-              connSuccess: true,
-              message: 'connection with the medical imaging database successful'
-            })
+            Alert.success(
+              'connection with the medical imaging database successful',
+              {
+                onClose: this.redirectToHome
+              }
+            )
             settings.set('conn-parameters', connParameters)
-          } else
-            this.setState({
-              connSuccess: false,
-              message: 'the database does not have the correct schema'
-            })
+            // if the database is not valid
+          } else Alert.error('the database does not have the correct schema')
         }
         pool.end()
       }
@@ -74,7 +74,7 @@ class Settings extends Component {
   }
 
   render() {
-    const { connParameters, connSuccess, message } = this.state
+    const { connParameters } = this.state
     return (
       <div className="container">
         <h2>Database Connection Parameters</h2>
@@ -121,11 +121,6 @@ class Settings extends Component {
           value="Delete Settings"
           onClick={this.deleteParameters}
         />
-        {connSuccess !== null && (
-          <p className={connSuccess ? 'success' : 'error'}>
-            Message: {message}
-          </p>
-        )}
       </div>
     )
   }

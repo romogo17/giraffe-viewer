@@ -1,19 +1,33 @@
 import React, { Component } from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, Link } from 'react-router-dom'
 import styled from 'styled-components'
+import Alert from 'react-s-alert'
+
 import './styles/App.css'
+import 'react-s-alert/dist/s-alert-default.css'
+import 'react-s-alert/dist/s-alert-css-effects/flip.css'
 
 import Dock from './components/Dock'
+import Patient from './components/Patient'
 import ProtectedRoute from './components/ProtectedRoute'
 import Settings from './components/Settings'
 
 // const settings = window.require('electron-settings')
 
-const Patient = () => <div>Patient</div>
+const Study = ({ match }) => <div>Study {match.params.uuid}</div>
 
-const Study = () => <div>Study</div>
-
-const Series = () => <div>Series</div>
+const Series = props => (
+  <div>
+    Series{' '}
+    <Link
+      to={{
+        pathname: '/study/13'
+      }}
+    >
+      GOTO Study 13
+    </Link>
+  </div>
+)
 
 const Instance = () => <div>Instance</div>
 
@@ -29,26 +43,35 @@ class App extends Component {
     return (
       <AppWrap className="app">
         <Titlebar>Giraffe Viewer</Titlebar>
-
         <Split>
           <Dock />
-
-          <Switch>
-            <Route exact path="/" render={() => <Redirect to="/patient" />} />
-            <ProtectedRoute path="/patient" component={Patient} />
-            <ProtectedRoute path="/study" component={Study} />
-            <ProtectedRoute path="/series" component={Series} />
-            <ProtectedRoute path="/instance" component={Instance} />
-            <ProtectedRoute path="/region" component={Region} />
-            <Route path="/settings" component={Settings} />
-          </Switch>
+          <Routes />
         </Split>
+        <Alert
+          stack={{ limit: 3 }}
+          position="top-right"
+          effect="flip"
+          offset={20}
+          timeout={1500}
+        />
       </AppWrap>
     )
   }
 }
 
 export default App
+
+const Routes = () => (
+  <Switch>
+    <Route exact path="/" render={() => <Redirect to="/patient" />} />
+    <ProtectedRoute path="/patient" component={Patient} title="Patient" />
+    <ProtectedRoute path="/study/:uuid?" component={Study} title="Study" />
+    <ProtectedRoute path="/series" component={Series} title="Series" />
+    <ProtectedRoute path="/instance" component={Instance} title="Instance" />
+    <ProtectedRoute path="/region" component={Region} title="Region" />
+    <Route path="/settings" component={Settings} />
+  </Switch>
+)
 
 const AppWrap = styled.div`
   margin-top: 22px;
