@@ -1,5 +1,4 @@
 import NodeCache from 'node-cache'
-import knex from './DB'
 import { difference } from '../utils/SetUtils'
 
 class Cache {

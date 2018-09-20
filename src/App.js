@@ -8,11 +8,9 @@ import 'react-s-alert/dist/s-alert-default.css'
 import 'react-s-alert/dist/s-alert-css-effects/flip.css'
 
 import Dock from './components/Dock'
-import Patient from './components/Patient'
+import Patient from './components/PatientView'
 import ProtectedRoute from './components/ProtectedRoute'
-import Settings from './components/Settings'
-
-// const settings = window.require('electron-settings')
+import SettingsView from './components/SettingsView'
 
 const Study = ({ match }) => <div>Study {match.params.uuid}</div>
 
@@ -34,12 +32,7 @@ const Instance = () => <div>Instance</div>
 const Region = () => <div>Region</div>
 
 class App extends Component {
-  state = {
-    //connParameters: settings.get('conn-parameters') || null
-  }
-
   render() {
-    //const { connParameters } = this.state
     return (
       <AppWrap className="app">
         <Titlebar>Giraffe Viewer</Titlebar>
@@ -62,19 +55,25 @@ class App extends Component {
 export default App
 
 const Routes = () => (
-  <Switch>
-    <Route exact path="/" render={() => <Redirect to="/patient" />} />
-    <ProtectedRoute path="/patient" component={Patient} title="Patient" />
-    <ProtectedRoute path="/study/:uuid?" component={Study} title="Study" />
-    <ProtectedRoute path="/series" component={Series} title="Series" />
-    <ProtectedRoute path="/instance" component={Instance} title="Instance" />
-    <ProtectedRoute path="/region" component={Region} title="Region" />
-    <Route path="/settings" component={Settings} />
-  </Switch>
+  <View>
+    <Switch>
+      <Route exact path="/" render={() => <Redirect to="/patient" />} />
+      <ProtectedRoute path="/patient" component={Patient} title="Patient" />
+      <ProtectedRoute path="/study/:uuid?" component={Study} title="Study" />
+      <ProtectedRoute path="/series" component={Series} title="Series" />
+      <ProtectedRoute path="/instance" component={Instance} title="Instance" />
+      <ProtectedRoute path="/region" component={Region} title="Region" />
+      <Route path="/settings" component={SettingsView} />
+    </Switch>
+  </View>
 )
 
 const AppWrap = styled.div`
   margin-top: 22px;
+`
+
+const View = styled.div`
+  flex: 1;
 `
 
 const Split = styled.div`

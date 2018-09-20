@@ -15,6 +15,7 @@
     "pg": "^7.4.3",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
+    "react-loading": "^2.0.3",
     "react-router-dom": "^4.3.1",
     "react-s-alert": "^1.4.1",
     "react-scripts": "1.1.5",

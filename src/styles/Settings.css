@@ -1,18 +1,15 @@
 .container {
-  width: 600px;
+  width: 60%;
   margin: 30px auto;
   display: block;
   padding: 10px 50px 50px;
   text-align: left;
-
-  border-radius: 10px;
-  /* background-color: red; */
 }
-h2 {
+.container h2 {
   margin-left: 5%;
 }
 
-input {
+.container input {
   color: white;
   background-color: #191e23;
   font-size: 18px;
@@ -22,25 +19,27 @@ input {
   border: none;
   border-bottom: 1px solid #4e5966;
 }
-input:focus {
+.container input:focus {
   outline: none;
   border-bottom: 1px solid #82d8d8;
 }
 
-input[type='submit'] {
+.container input[type='submit'] {
   width: 90%;
   display: block;
   margin: 5%;
   margin-top: 10%;
   border: 1px solid #82d8d8;
+  border-radius: 6rem;
 }
 
-input[type='button'] {
+.container input[type='button'] {
   width: 90%;
   display: block;
   margin: 5%;
   margin-top: 10%;
   border: 1px solid #ff4f4f;
+  border-radius: 6rem;
 }
 
 .container p {
@@ -49,16 +48,21 @@ input[type='button'] {
   margin-top: 10%;
 }
 
-.error {
+.container .error {
   color: #ff4f4f;
 }
 
-.success {
+.container .success {
   color: #82d8d8;
 }
 
 @media (max-width: 767px) {
-  input {
+  .container {
+    width: 80%;
+    padding: 10px 10px 50px;
+    text-align: left;
+  }
+  .container input {
     display: block;
     margin: 5% 5%;
     width: 90%;

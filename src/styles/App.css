@@ -2,3 +2,10 @@
   background-color: #191e23;
   color: white;
 }
+
+textarea,
+select,
+input,
+button {
+  outline: none;
+}

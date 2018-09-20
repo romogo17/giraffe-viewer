@@ -5,7 +5,7 @@ import Alert from 'react-s-alert'
 const settings = window.require('electron-settings')
 const { Pool } = window.require('pg')
 
-class Settings extends Component {
+class SettingsView extends Component {
   state = {
     connParameters: settings.get('conn-parameters') || {
       user: '',
@@ -126,4 +126,4 @@ class Settings extends Component {
   }
 }
 
-export default Settings
+export default SettingsView

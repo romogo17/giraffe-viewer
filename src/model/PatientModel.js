@@ -18,11 +18,9 @@ const columns = [
 ]
 
 const PatientModel = {
-  getAllPatients(page = 1, pageSize = 7) {
-    return knex
-      .select('uuid')
-      .from(tableName)
-      .where('active', true)
+  getPatients({ keyword = '', filters = [] }, { page = 1, pageSize = 7 }) {
+    console.log('Get Patients', { keyword, filters, page, pageSize })
+    return this.buildQuery(this.baseQuery())(filters)(keyword)
       .orderBy(orderColumn, 'desc')
       .limit(7)
       .offset((page - 1) * pageSize)
@@ -49,37 +47,27 @@ const PatientModel = {
         return result
       })
   },
-  getPageKeys(page = 1, pageSize = 7) {
-    console.log('MODEL: Querying keys for page ', page, ' of size ', pageSize)
-    return knex
-      .select('uuid')
-      .from(tableName)
-      .where('active', true)
-      .orderBy(orderColumn, 'desc')
-      .limit(7)
-      .offset((page - 1) * pageSize)
-      .then(rows => rows.map(r => r.uuid))
+  baseQuery() {
+    return knex.select('uuid').from(tableName)
   },
-  getPatients(page = 1, pageSize = 7) {
-    return this.getPageKeys(page, pageSize)
-      .then(keys => {
-        console.log('MODEL: Keys I need according to database', keys)
-        return cache.mget(keys, missingKeys => {
-          console.log('MODEL: Keys I need to query', missingKeys)
-          return knex
-            .select(columns)
-            .from(tableName)
-            .whereIn('uuid', missingKeys)
-            .then(rows => {
-              console.log('MODEL: Values returned from the DB', rows)
-              return rows
-            })
-        })
-      })
-      .then(result => {
-        console.log('MODEL: Final values to be returned', result)
-        return result
-      })
+  buildQuery(queryBuilder) {
+    return filters => {
+      return keyword => {
+        // First apply the needed filters
+        if (filters !== [])
+          filters.forEach(({ column, value }) => {
+            queryBuilder = queryBuilder.where(column, value)
+          })
+        // Then apply the keyword
+        queryBuilder =
+          keyword !== ''
+            ? queryBuilder
+                .where('given_name', 'like', `%${keyword}%`)
+                .orWhere('family_name', 'like', `%${keyword}%`)
+            : queryBuilder
+        return queryBuilder
+      }
+    }
   }
 }
 
