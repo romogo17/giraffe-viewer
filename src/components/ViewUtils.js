@@ -50,7 +50,8 @@ export const InputIconSpan = styled.span`
   position: relative;
   color: #4e5966;
   right: 2.5rem;
-  pointer-events: none;
+  top: 0.08rem;
+  /* pointer-events: none; */
 `
 
 export const ItemContainer = styled.div`
@@ -60,19 +61,17 @@ export const ItemContainer = styled.div`
   align-items: stretch;
   width: 100%;
 
+  /* This makes the container scrollable */
   flex-grow: 1;
   overflow: auto;
-
   /* background-color: #aaa; */
 `
 
-export const LoadingContainer = styled.div`
+export const CenteredContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-
-  /* background-color: #aaa; */
 `

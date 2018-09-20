@@ -3,7 +3,11 @@ import ReactLoading from 'react-loading'
 import Alert from 'react-s-alert'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import {
+  faSearch,
+  faTimes,
+  faBinoculars
+} from '@fortawesome/free-solid-svg-icons'
 import PatientModel from '../model/PatientModel'
 import {
   ViewSplit,
@@ -12,8 +16,11 @@ import {
   SearchInput,
   InputIconSpan,
   ItemContainer,
-  LoadingContainer
+  CenteredContainer
 } from './ViewUtils'
+
+const WAIT_INTERVAL = 500
+const ENTER_KEY = 13
 
 class Patient extends Component {
   state = {
@@ -28,8 +35,9 @@ class Patient extends Component {
     },
     loading: false
   }
+  timer = null
 
-  search() {
+  search = () => {
     const { search, paging } = this.state
     this.setState({ loading: true })
     PatientModel.getPatients(search, paging)
@@ -37,12 +45,34 @@ class Patient extends Component {
       .catch(err => this.alertModelError(err))
   }
 
-  onSearchChange = e => {
+  handleSearchChange = e => {
+    clearTimeout(this.timer)
     const { search } = this.state
     this.setState({
-      search: { keyword: e.target.value, filters: search.filters }
+      search: { keyword: e.target.value, filters: search.filters },
+      loading: true
     })
-    this.search()
+    this.timer = setTimeout(this.search, WAIT_INTERVAL)
+  }
+
+  handleSearchClick = e => {
+    const { search } = this.state
+    if (search.keyword !== '') {
+      this.setState(
+        {
+          search: { keyword: '', filters: search.filters },
+          loading: true
+        },
+        this.search
+      )
+    }
+  }
+
+  handleKeyDown = e => {
+    if (e.keyCode === ENTER_KEY) {
+      clearTimeout(this.timer)
+      this.search()
+    }
   }
 
   componentDidMount = () => this.search()
@@ -65,22 +95,27 @@ class Patient extends Component {
               type="text"
               placeholder="Search..."
               value={search.keyword}
-              onChange={this.onSearchChange}
+              onChange={this.handleSearchChange}
+              onKeyDown={this.handleKeyDown}
             />
-            <InputIconSpan>
-              <FontAwesomeIcon icon={faSearch} />
+            <InputIconSpan onClick={this.handleSearchClick}>
+              <FontAwesomeIcon
+                icon={search.keyword === '' ? faSearch : faTimes}
+              />
             </InputIconSpan>
           </SearchArea>
           {loading ? (
-            <LoadingContainer>
+            <CenteredContainer>
               <ReactLoading type="spin" color="white" />
-              Loading...
-            </LoadingContainer>
+              <p>Loading...</p>
+            </CenteredContainer>
           ) : (
             <ItemContainer>
-              {items.map(item => (
-                <Item data={item} key={item.uuid} />
-              ))}
+              {items.length > 0 ? (
+                items.map(item => <Item data={item} key={item.uuid} />)
+              ) : (
+                <NoResultsFound />
+              )}
             </ItemContainer>
           )}
           <PaginationArea>Pagination Here</PaginationArea>
@@ -98,6 +133,17 @@ const Item = ({ data: { uuid, given_name, family_name, sex, birthdate } }) => (
     <h1>{uuid}</h1>
     <h2>{given_name}</h2>
   </div>
+)
+
+const NoResultsFound = () => (
+  <CenteredContainer>
+    <FontAwesomeIcon
+      icon={faBinoculars}
+      size="4x"
+      style={{ color: '#82d8d8' }}
+    />
+    <h1>No results found</h1>
+  </CenteredContainer>
 )
 
 const PaginationArea = styled.div`

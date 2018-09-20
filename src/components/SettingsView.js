@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/Settings.css'
 import Alert from 'react-s-alert'
+import { ViewSplit, Panel, ItemContainer } from './ViewUtils'
 
 const settings = window.require('electron-settings')
 const { Pool } = window.require('pg')
@@ -76,52 +77,60 @@ class SettingsView extends Component {
   render() {
     const { connParameters } = this.state
     return (
-      <div className="container">
-        <h2>Database Connection Parameters</h2>
-        <form
-          onSubmit={e => {
-            e.preventDefault()
-            this.testConnection()
-          }}
-        >
-          <input
-            type="text"
-            placeholder="User"
-            value={connParameters.user}
-            onChange={e => this.updateParameters({ user: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Host"
-            value={connParameters.host}
-            onChange={e => this.updateParameters({ host: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Database"
-            value={connParameters.database}
-            onChange={e => this.updateParameters({ database: e.target.value })}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={connParameters.password}
-            onChange={e => this.updateParameters({ password: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Port"
-            value={connParameters.port}
-            onChange={e => this.updateParameters({ port: e.target.value })}
-          />
-          <input type="submit" value="Save" />
-        </form>
-        <input
-          type="button"
-          value="Delete Settings"
-          onClick={this.deleteParameters}
-        />
-      </div>
+      <ViewSplit>
+        <Panel>
+          <ItemContainer className="container">
+            <h2>Database Connection Parameters</h2>
+            <form
+              onSubmit={e => {
+                e.preventDefault()
+                this.testConnection()
+              }}
+            >
+              <input
+                type="text"
+                placeholder="User"
+                value={connParameters.user}
+                onChange={e => this.updateParameters({ user: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Host"
+                value={connParameters.host}
+                onChange={e => this.updateParameters({ host: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Database"
+                value={connParameters.database}
+                onChange={e =>
+                  this.updateParameters({ database: e.target.value })
+                }
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={connParameters.password}
+                onChange={e =>
+                  this.updateParameters({ password: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Port"
+                value={connParameters.port}
+                onChange={e => this.updateParameters({ port: e.target.value })}
+              />
+              <input type="submit" value="Save" />
+              <input
+                type="button"
+                value="Delete Settings"
+                onClick={this.deleteParameters}
+              />
+            </form>
+          </ItemContainer>
+        </Panel>
+      </ViewSplit>
     )
   }
 }
