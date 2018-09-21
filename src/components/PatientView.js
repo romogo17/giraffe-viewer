@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ReactLoading from 'react-loading'
 import Alert from 'react-s-alert'
 import styled from 'styled-components'
+import differenceInYears from 'date-fns/difference_in_years'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faSearch,
@@ -16,7 +17,9 @@ import {
   SearchInput,
   InputIconSpan,
   ItemContainer,
-  CenteredContainer
+  CenteredContainer,
+  ItemDiv,
+  Meta
 } from './ViewUtils'
 
 const WAIT_INTERVAL = 500
@@ -27,7 +30,7 @@ class Patient extends Component {
     items: [],
     paging: {
       page: 1,
-      itemsByPage: 7
+      pageSize: 7
     },
     search: {
       keyword: '',
@@ -104,20 +107,7 @@ class Patient extends Component {
               />
             </InputIconSpan>
           </SearchArea>
-          {loading ? (
-            <CenteredContainer>
-              <ReactLoading type="spin" color="white" />
-              <p>Loading...</p>
-            </CenteredContainer>
-          ) : (
-            <ItemContainer>
-              {items.length > 0 ? (
-                items.map(item => <Item data={item} key={item.uuid} />)
-              ) : (
-                <NoResultsFound />
-              )}
-            </ItemContainer>
-          )}
+          {loading ? <LoadingIndicator /> : <ItemList items={items} />}
           <PaginationArea>Pagination Here</PaginationArea>
         </Panel>
         <Div>P Dock</Div>
@@ -128,11 +118,46 @@ class Patient extends Component {
 
 export default Patient
 
-const Item = ({ data: { uuid, given_name, family_name, sex, birthdate } }) => (
-  <div>
-    <h1>{uuid}</h1>
-    <h2>{given_name}</h2>
-  </div>
+const ItemList = ({ items }) => (
+  <ItemContainer>
+    {items.length > 0 ? (
+      items.map(item => <Item data={item} key={item.uuid} />)
+    ) : (
+      <NoResultsFound />
+    )}
+  </ItemContainer>
+)
+
+const Item = ({
+  data: { uuid, given_name, family_name, sex, birthdate, address }
+}) => (
+  <ItemDiv>
+    <div style={{ flex: 3 }}>
+      <h2>
+        {given_name} {family_name}
+      </h2>
+      <p className="uuid">{uuid}</p>
+    </div>
+    <Meta color="#add1d1" flex="1">
+      {differenceInYears(new Date(), birthdate)} years
+    </Meta>
+    <Meta
+      color={sex === 1 ? '#adb4d1' : sex === 2 ? '#d1add0' : '#4e5966'}
+      flex="1"
+    >
+      {sex === 0
+        ? 'Not known'
+        : sex === 1
+          ? 'Male'
+          : sex === 2
+            ? 'Female'
+            : 'N/A'}
+    </Meta>
+    <Meta color="#add1d1" flex="2">
+      <div>{address.country}</div>
+      <div>{address.city}</div>
+    </Meta>
+  </ItemDiv>
 )
 
 const NoResultsFound = () => (
@@ -143,6 +168,13 @@ const NoResultsFound = () => (
       style={{ color: '#82d8d8' }}
     />
     <h1>No results found</h1>
+  </CenteredContainer>
+)
+
+const LoadingIndicator = () => (
+  <CenteredContainer>
+    <ReactLoading type="spin" color="white" />
+    <p>Loading...</p>
   </CenteredContainer>
 )
 

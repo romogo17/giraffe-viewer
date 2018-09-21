@@ -5,13 +5,13 @@ const ttl = 60 * 60 * 1 // 1 hour
 const cache = new Cache(ttl)
 
 const tableName = 'patient'
-const orderColumn = 'created_at'
+const orderColumn = 'given_name'
 const columns = [
   'uuid',
   'given_name',
   'family_name',
   'other_ids',
-  'region',
+  'address',
   'sex',
   'birthdate',
   'created_at'
@@ -21,8 +21,8 @@ const PatientModel = {
   getPatients({ keyword = '', filters = [] }, { page = 1, pageSize = 7 }) {
     console.log('Get Patients', { keyword, filters, page, pageSize })
     return this.buildQuery(this.baseQuery())(filters)(keyword)
-      .orderBy(orderColumn, 'desc')
-      .limit(7)
+      .orderBy(orderColumn, 'asc')
+      .limit(pageSize)
       .offset((page - 1) * pageSize)
       .then(rows => rows.map(r => r.uuid))
       .then(keys => this.fetchPatients(keys))
@@ -44,7 +44,14 @@ const PatientModel = {
       .then(result => {
         console.log('MODEL: Returning values for keys', result)
         console.log('________________________________________________________')
-        return result
+        return result.sort(
+          (a, b) =>
+            a.given_name > b.given_name
+              ? 1
+              : a.given_name < b.given_name
+                ? -1
+                : 0
+        )
       })
   },
   baseQuery() {
@@ -62,9 +69,21 @@ const PatientModel = {
         queryBuilder =
           keyword !== ''
             ? queryBuilder
-                .where('given_name', 'like', `%${keyword}%`)
-                .orWhere('family_name', 'like', `%${keyword}%`)
-            : queryBuilder
+                .where(
+                  knex.raw(
+                    'LOWER(given_name) like ?',
+                    `%${keyword.toLowerCase()}%`
+                  )
+                )
+                .orWhere(
+                  knex.raw(
+                    'LOWER(family_name) like ?',
+                    `%${keyword.toLowerCase()}%`
+                  )
+                )
+                .orWhere(knex.raw('uuid::varchar like ?', `${keyword}%`))
+            : //.orWhere('uuid', keyword)
+              queryBuilder
         return queryBuilder
       }
     }

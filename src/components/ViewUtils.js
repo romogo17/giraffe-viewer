@@ -62,9 +62,10 @@ export const ItemContainer = styled.div`
   width: 100%;
 
   /* This makes the container scrollable */
-  flex-grow: 1;
   overflow: auto;
-  /* background-color: #aaa; */
+  flex-grow: 1;
+  /* box-shadow: inset 0px 11px 15px -5px #191e23,
+    inset 0px -11px 15px -5px #191e23; */
 `
 
 export const CenteredContainer = styled.div`
@@ -74,4 +75,36 @@ export const CenteredContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+`
+
+export const ItemDiv = styled.div`
+  height: 6rem;
+  margin: 0 2rem;
+  padding: 0 2rem;
+  border-bottom: solid 1px #4e5966;
+
+  flex: 0 0 auto; /* grow, shrink, basis */
+  display: flex;
+  align-items: stretch;
+
+  & h2 {
+    margin: 1rem 0 0.4rem 0;
+  }
+  & .uuid {
+    color: #4e5966;
+    margin: 0;
+  }
+`
+
+export const Meta = styled.div`
+  flex: ${props => props.flex};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 5%;
+
+  border: solid 1px ${props => props.color};
+  color: ${props => props.color};
+  border-radius: 0.7rem;
 `
