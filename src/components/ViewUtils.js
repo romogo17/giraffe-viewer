@@ -99,6 +99,12 @@ export const ItemDiv = styled.div`
     margin: 0;
     margin-bottom: 1rem;
   }
+
+  transition: 0.3s ease all;
+  &:hover {
+    border-left: solid 4px #82d8d8;
+    border-right: solid 4px #82d8d8;
+  }
 `
 
 export const Meta = styled.div`

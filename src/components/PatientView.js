@@ -80,7 +80,6 @@ class Patient extends Component {
   }
 
   onPagingChange = (current, size) => {
-    const { paging } = this.state
     this.setState(
       {
         paging: {
