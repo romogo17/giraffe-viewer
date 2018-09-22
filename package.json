@@ -13,6 +13,8 @@
     "knex": "^0.15.2",
     "node-cache": "^4.2.0",
     "pg": "^7.4.3",
+    "rc-pagination": "^1.17.2",
+    "rc-select": "^6.9.8",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
     "react-loading": "^2.0.3",
@@ -20,7 +22,8 @@
     "react-s-alert": "^1.4.1",
     "react-scripts": "1.1.5",
     "styled-components": "^3.4.6",
-    "typeface-roboto": "^0.0.54"
+    "typeface-roboto": "^0.0.54",
+    "typeface-roboto-mono": "^0.0.54"
   },
   "homepage": "./",
   "main": "public/electron.js",

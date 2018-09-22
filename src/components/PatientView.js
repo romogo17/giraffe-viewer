@@ -3,6 +3,11 @@ import ReactLoading from 'react-loading'
 import Alert from 'react-s-alert'
 import styled from 'styled-components'
 import differenceInYears from 'date-fns/difference_in_years'
+import Select from 'rc-select'
+import Pagination from 'rc-pagination'
+import 'rc-pagination/assets/index.css'
+import 'rc-select/assets/index.css'
+import localeInfo from 'rc-pagination/lib/locale/en_US'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faSearch,
@@ -19,7 +24,8 @@ import {
   ItemContainer,
   CenteredContainer,
   ItemDiv,
-  Meta
+  Meta,
+  PaginationStyle
 } from './ViewUtils'
 
 const WAIT_INTERVAL = 500
@@ -30,7 +36,7 @@ class Patient extends Component {
     items: [],
     paging: {
       page: 1,
-      pageSize: 7
+      pageSize: 10
     },
     search: {
       keyword: '',
@@ -39,6 +45,8 @@ class Patient extends Component {
     loading: false
   }
   timer = null
+
+  componentDidMount = () => this.search()
 
   search = () => {
     const { search, paging } = this.state
@@ -71,14 +79,26 @@ class Patient extends Component {
     }
   }
 
+  onPagingChange = (current, size) => {
+    const { paging } = this.state
+    this.setState(
+      {
+        paging: {
+          page: current,
+          pageSize: size
+        },
+        loading: true
+      },
+      this.search
+    )
+  }
+
   handleKeyDown = e => {
     if (e.keyCode === ENTER_KEY) {
       clearTimeout(this.timer)
       this.search()
     }
   }
-
-  componentDidMount = () => this.search()
 
   alertModelError({ code, routine, hint, ...rest }) {
     Alert.error(`<b>${code}: ${routine}.</b> ${hint}`, {
@@ -89,7 +109,7 @@ class Patient extends Component {
   }
 
   render() {
-    const { items, search, loading } = this.state
+    const { items, search, loading, paging } = this.state
     return (
       <ViewSplit>
         <Panel>
@@ -108,7 +128,19 @@ class Patient extends Component {
             </InputIconSpan>
           </SearchArea>
           {loading ? <LoadingIndicator /> : <ItemList items={items} />}
-          <PaginationArea>Pagination Here</PaginationArea>
+          <PaginationArea>
+            <Pagination
+              selectComponentClass={Select}
+              showQuickJumper
+              showSizeChanger
+              defaultPageSize={paging.pageSize}
+              defaultCurrent={paging.page}
+              onShowSizeChange={this.onPagingChange}
+              onChange={this.onPagingChange}
+              total={200}
+              locale={localeInfo}
+            />
+          </PaginationArea>
         </Panel>
         <Div>P Dock</Div>
       </ViewSplit>
@@ -180,8 +212,106 @@ const LoadingIndicator = () => (
 
 const PaginationArea = styled.div`
   margin: 0;
+  margin-left: 2rem;
   padding: 0;
   height: 50px;
+
+  & ul {
+    margin-top: 12;
+    margin-bottom: 0;
+  }
+
+  .rc-pagination * {
+    outline: none;
+  }
+
+  .rc-pagination-item {
+    background-color: #191e23;
+    border-color: #4e5966;
+  }
+
+  .rc-pagination-item a {
+    color: #4e5966;
+  }
+
+  .rc-pagination-item:hover,
+  .rc-pagination-item:hover a {
+    border-color: #82d8d8;
+    color: white;
+  }
+
+  .rc-pagination-item-active {
+    background-color: #191e23;
+    border-color: #82d8d8;
+  }
+
+  .rc-pagination-item-active a {
+    color: white;
+  }
+
+  .rc-pagination-prev,
+  .rc-pagination-next,
+  .rc-pagination-prev a,
+  .rc-pagination-next a {
+    border: none;
+    color: #4e5966;
+  }
+
+  .rc-pagination-jump-prev:after,
+  .rc-pagination-jump-next:after {
+    color: #4e5966;
+  }
+
+  .rc-pagination-jump-prev:hover:after,
+  .rc-pagination-jump-next:hover:after {
+    color: #82d8d8;
+  }
+
+  .rc-select-dropdown {
+    background-color: #191e23;
+    border-color: #4e5966;
+    box-shadow: 0 0px 4px black;
+  }
+
+  li.rc-select-dropdown-menu-item {
+    color: #4e5966;
+  }
+
+  li.rc-select-dropdown-menu-item-selected {
+    color: white;
+    background-color: #191e23;
+  }
+
+  li.rc-select-dropdown-menu-item:hover {
+    color: white;
+    background-color: #191e23;
+  }
+
+  .rc-select-selection {
+    background-color: #191e23;
+    border-color: #4e5966;
+    color: #4e5966;
+  }
+
+  .rc-select-focused .rc-select-selection,
+  .rc-select-enabled .rc-select-selection:hover,
+  .rc-select-open .rc-select-selection {
+    border-color: #82d8d8;
+  }
+
+  .rc-select-arrow b {
+    border-color: #4e5966 transparent transparent transparent;
+  }
+
+  .rc-pagination-options {
+    color: #4e5966;
+  }
+
+  .rc-pagination-options input[type='text'] {
+    background-color: #191e23;
+    border-color: #4e5966;
+    color: white;
+  }
 `
 
 const Div = styled.div`

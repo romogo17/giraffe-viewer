@@ -86,13 +86,18 @@ export const ItemDiv = styled.div`
   flex: 0 0 auto; /* grow, shrink, basis */
   display: flex;
   align-items: stretch;
+  /* flex-wrap: wrap; */
 
   & h2 {
     margin: 1rem 0 0.4rem 0;
   }
   & .uuid {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.89rem;
+    font-weight: 400;
     color: #4e5966;
     margin: 0;
+    margin-bottom: 1rem;
   }
 `
 
