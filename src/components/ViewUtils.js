@@ -91,14 +91,6 @@ export const ItemDiv = styled.div`
   & h2 {
     margin: 1rem 0 0.4rem 0;
   }
-  & .uuid {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.89rem;
-    font-weight: 400;
-    color: #4e5966;
-    margin: 0;
-    margin-bottom: 1rem;
-  }
 
   transition: 0.3s ease all;
   &:hover {
@@ -118,4 +110,108 @@ export const Meta = styled.div`
   border: solid 1px ${props => props.color};
   color: ${props => props.color};
   border-radius: 0.7rem;
+`
+
+export const PaginationArea = styled.div`
+  margin: 0;
+  margin-left: 2rem;
+  padding: 0;
+  height: 50px;
+
+  & ul {
+    margin-top: 12;
+    margin-bottom: 0;
+  }
+
+  .rc-pagination * {
+    outline: none;
+  }
+
+  .rc-pagination-item {
+    background-color: #191e23;
+    border-color: #4e5966;
+  }
+
+  .rc-pagination-item a {
+    color: #4e5966;
+  }
+
+  .rc-pagination-item:hover,
+  .rc-pagination-item:hover a {
+    border-color: #82d8d8;
+    color: white;
+  }
+
+  .rc-pagination-item-active {
+    background-color: #191e23;
+    border-color: #82d8d8;
+  }
+
+  .rc-pagination-item-active a {
+    color: white;
+  }
+
+  .rc-pagination-prev,
+  .rc-pagination-next,
+  .rc-pagination-prev a,
+  .rc-pagination-next a {
+    border: none;
+    color: #4e5966;
+  }
+
+  .rc-pagination-jump-prev:after,
+  .rc-pagination-jump-next:after {
+    color: #4e5966;
+  }
+
+  .rc-pagination-jump-prev:hover:after,
+  .rc-pagination-jump-next:hover:after {
+    color: #82d8d8;
+  }
+
+  .rc-select-dropdown {
+    background-color: #191e23;
+    border-color: #4e5966;
+    box-shadow: 0 0px 4px black;
+  }
+
+  li.rc-select-dropdown-menu-item {
+    color: #4e5966;
+  }
+
+  li.rc-select-dropdown-menu-item-selected {
+    color: white;
+    background-color: #191e23;
+  }
+
+  li.rc-select-dropdown-menu-item:hover {
+    color: white;
+    background-color: #191e23;
+  }
+
+  .rc-select-selection {
+    background-color: #191e23;
+    border-color: #4e5966;
+    color: #4e5966;
+  }
+
+  .rc-select-focused .rc-select-selection,
+  .rc-select-enabled .rc-select-selection:hover,
+  .rc-select-open .rc-select-selection {
+    border-color: #82d8d8;
+  }
+
+  .rc-select-arrow b {
+    border-color: #4e5966 transparent transparent transparent;
+  }
+
+  .rc-pagination-options {
+    color: #4e5966;
+  }
+
+  .rc-pagination-options input[type='text'] {
+    background-color: #191e23;
+    border-color: #4e5966;
+    color: white;
+  }
 `

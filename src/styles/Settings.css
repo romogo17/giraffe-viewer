@@ -10,19 +10,16 @@
 .container h2 {
   margin-left: 5%;
 }
+
 .container input {
-  color: white;
+  /* color: white;
   background-color: #191e23;
-  font-size: 18px;
+  font-size: 18px;*/
   padding: 10px 10px 10px 5px;
   margin: 5% 5%;
   width: 40%;
-  border: none;
-  border-bottom: 1px solid #4e5966;
-}
-.container input:focus {
-  outline: none;
-  border-bottom: 1px solid #82d8d8;
+  /* border: none;
+  border-bottom: 1px solid #4e5966; */
 }
 
 .container input[type='submit'] {

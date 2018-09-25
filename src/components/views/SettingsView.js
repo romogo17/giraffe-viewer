@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import '../styles/Settings.css'
+import '../../styles/Settings.css'
 import Alert from 'react-s-alert'
-import { ViewSplit, Panel, ItemContainer } from './ViewUtils'
+import { ViewSplit, Panel, ItemContainer } from '../ViewUtils'
 
 const settings = window.require('electron-settings')
 const { Pool } = window.require('pg')

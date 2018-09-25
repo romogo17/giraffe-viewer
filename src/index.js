@@ -6,6 +6,9 @@ import './styles/index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import { MemoryRouter as Router } from 'react-router-dom'
+import Modal from 'react-modal'
+
+Modal.setAppElement('#root')
 
 ReactDOM.render(
   <Router>

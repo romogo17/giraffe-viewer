@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import ReactLoading from 'react-loading'
 import Alert from 'react-s-alert'
-import styled from 'styled-components'
 import differenceInYears from 'date-fns/difference_in_years'
+import Modal from 'react-modal'
 import Select from 'rc-select'
 import Pagination from 'rc-pagination'
 import 'rc-pagination/assets/index.css'
@@ -14,7 +14,9 @@ import {
   faTimes,
   faBinoculars
 } from '@fortawesome/free-solid-svg-icons'
-import PatientModel from '../model/PatientModel'
+import PatientModel from '../../model/PatientModel'
+import ViewDock from '../ViewDock'
+import { ViewMode } from '../../utils/Enums'
 import {
   ViewSplit,
   Panel,
@@ -25,13 +27,30 @@ import {
   CenteredContainer,
   ItemDiv,
   Meta,
-  PaginationStyle
-} from './ViewUtils'
+  PaginationArea
+} from '../ViewUtils'
+
+import styled from 'styled-components'
 
 const WAIT_INTERVAL = 500
 const ENTER_KEY = 13
 
-class Patient extends Component {
+const customStyles = {
+  overlay: { backgroundColor: 'rgba(0, 0, 0, 0.75)' },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '0.7rem',
+    background: '#191e23',
+    border: '1px solid #82d8d8'
+  }
+}
+
+class PatientView extends Component {
   state = {
     items: [],
     paging: {
@@ -42,7 +61,11 @@ class Patient extends Component {
       keyword: '',
       filters: [{ column: 'active', value: true }]
     },
-    loading: false
+    loading: false,
+    isShowingItemModal: false,
+    isShowingFilterModal: false,
+    activeItem: {},
+    mode: ViewMode.VIEW
   }
   timer = null
 
@@ -111,6 +134,52 @@ class Patient extends Component {
     const { items, search, loading, paging } = this.state
     return (
       <ViewSplit>
+        <Modal
+          isOpen={this.state.isShowingItemModal}
+          onRequestClose={() =>
+            this.setState({ isShowingItemModal: false, mode: ViewMode.VIEW })
+          }
+          style={customStyles}
+          contentLabel="Item Modal"
+        >
+          {this.state.mode === ViewMode.ADD ? (
+            <h2>New patient:</h2>
+          ) : (
+            <React.Fragment>
+              <h2>Patient:</h2>
+              <p className="uuid">sdfvjsfdjov-34r234f34-23d2ef4</p>
+            </React.Fragment>
+          )}
+
+          <ModalSplit>
+            <div className="floating-label">
+              <input placeholder="Given name" type="text" autoComplete="off" />
+              <label>Given name:</label>
+            </div>
+            <div className="floating-label">
+              <input placeholder="Family name" type="text" autoComplete="off" />
+              <label>Family name:</label>
+            </div>
+            <div className="floating-label">
+              <input placeholder="Email" type="text" autoComplete="off" />
+              <label>Email:</label>
+            </div>
+          </ModalSplit>
+          <ModalSplit>
+            <div className="floating-label">
+              <input placeholder="Country" type="text" autoComplete="off" />
+              <label>Country:</label>
+            </div>
+            <div className="floating-label">
+              <input placeholder="State" type="text" autoComplete="off" />
+              <label>State:</label>
+            </div>
+            <div className="floating-label">
+              <input placeholder="City" type="text" autoComplete="off" />
+              <label>City:</label>
+            </div>
+          </ModalSplit>
+        </Modal>
         <Panel>
           <SearchArea>
             <SearchInput
@@ -141,13 +210,24 @@ class Patient extends Component {
             />
           </PaginationArea>
         </Panel>
-        <Div>P Dock</Div>
+        <ViewDock
+          onAddClick={() =>
+            this.setState({ isShowingItemModal: true, mode: ViewMode.ADD })
+          }
+          onFilterClick={() => this.setState({ isShowingFilterModal: true })}
+        />
       </ViewSplit>
     )
   }
 }
 
-export default Patient
+export default PatientView
+
+const ModalSplit = styled.div`
+  display: flex;
+  /* height: calc(100vh - 22px); */
+  /* align-items: center; */
+`
 
 const ItemList = ({ items }) => (
   <ItemContainer>
@@ -208,112 +288,3 @@ const LoadingIndicator = () => (
     <p>Loading...</p>
   </CenteredContainer>
 )
-
-const PaginationArea = styled.div`
-  margin: 0;
-  margin-left: 2rem;
-  padding: 0;
-  height: 50px;
-
-  & ul {
-    margin-top: 12;
-    margin-bottom: 0;
-  }
-
-  .rc-pagination * {
-    outline: none;
-  }
-
-  .rc-pagination-item {
-    background-color: #191e23;
-    border-color: #4e5966;
-  }
-
-  .rc-pagination-item a {
-    color: #4e5966;
-  }
-
-  .rc-pagination-item:hover,
-  .rc-pagination-item:hover a {
-    border-color: #82d8d8;
-    color: white;
-  }
-
-  .rc-pagination-item-active {
-    background-color: #191e23;
-    border-color: #82d8d8;
-  }
-
-  .rc-pagination-item-active a {
-    color: white;
-  }
-
-  .rc-pagination-prev,
-  .rc-pagination-next,
-  .rc-pagination-prev a,
-  .rc-pagination-next a {
-    border: none;
-    color: #4e5966;
-  }
-
-  .rc-pagination-jump-prev:after,
-  .rc-pagination-jump-next:after {
-    color: #4e5966;
-  }
-
-  .rc-pagination-jump-prev:hover:after,
-  .rc-pagination-jump-next:hover:after {
-    color: #82d8d8;
-  }
-
-  .rc-select-dropdown {
-    background-color: #191e23;
-    border-color: #4e5966;
-    box-shadow: 0 0px 4px black;
-  }
-
-  li.rc-select-dropdown-menu-item {
-    color: #4e5966;
-  }
-
-  li.rc-select-dropdown-menu-item-selected {
-    color: white;
-    background-color: #191e23;
-  }
-
-  li.rc-select-dropdown-menu-item:hover {
-    color: white;
-    background-color: #191e23;
-  }
-
-  .rc-select-selection {
-    background-color: #191e23;
-    border-color: #4e5966;
-    color: #4e5966;
-  }
-
-  .rc-select-focused .rc-select-selection,
-  .rc-select-enabled .rc-select-selection:hover,
-  .rc-select-open .rc-select-selection {
-    border-color: #82d8d8;
-  }
-
-  .rc-select-arrow b {
-    border-color: #4e5966 transparent transparent transparent;
-  }
-
-  .rc-pagination-options {
-    color: #4e5966;
-  }
-
-  .rc-pagination-options input[type='text'] {
-    background-color: #191e23;
-    border-color: #4e5966;
-    color: white;
-  }
-`
-
-const Div = styled.div`
-  background-color: #0f1419;
-  width: 50px;
-`
