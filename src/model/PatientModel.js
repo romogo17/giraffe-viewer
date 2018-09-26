@@ -14,7 +14,9 @@ const columns = [
   'address',
   'sex',
   'birthdate',
-  'created_at'
+  'created_at',
+  'updated_at',
+  'email'
 ]
 
 const PatientModel = {
@@ -86,6 +88,34 @@ const PatientModel = {
               queryBuilder
         return queryBuilder
       }
+    }
+  },
+  insertPatient(patient) {
+    return knex(tableName)
+      .returning('uuid')
+      .insert(patient)
+      .then(result => result[0])
+      .catch(err => console.log({ err }))
+  },
+  updatePatient(patient) {
+    return knex(tableName)
+      .returning('uuid')
+      .where('uuid', patient.uuid)
+      .update(patient)
+      .then(result => {
+        const uuid = result[0]
+        cache.del(uuid)
+        return uuid
+      })
+  },
+  emptyPatient() {
+    return {
+      given_name: '',
+      family_name: '',
+      address: { country: '', state: '', city: '' },
+      sex: '',
+      birthdate: '',
+      email: ''
     }
   }
 }

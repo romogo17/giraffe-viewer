@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ReactLoading from 'react-loading'
 import Alert from 'react-s-alert'
 import differenceInYears from 'date-fns/difference_in_years'
-import Modal from 'react-modal'
 import Select from 'rc-select'
 import Pagination from 'rc-pagination'
 import 'rc-pagination/assets/index.css'
@@ -15,6 +14,7 @@ import {
   faBinoculars
 } from '@fortawesome/free-solid-svg-icons'
 import PatientModel from '../../model/PatientModel'
+import PatientItemModal from '../modals/PatientItemModal'
 import ViewDock from '../ViewDock'
 import { ViewMode } from '../../utils/Enums'
 import {
@@ -30,25 +30,8 @@ import {
   PaginationArea
 } from '../ViewUtils'
 
-import styled from 'styled-components'
-
 const WAIT_INTERVAL = 500
 const ENTER_KEY = 13
-
-const customStyles = {
-  overlay: { backgroundColor: 'rgba(0, 0, 0, 0.75)' },
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    borderRadius: '0.7rem',
-    background: '#191e23',
-    border: '1px solid #82d8d8'
-  }
-}
 
 class PatientView extends Component {
   state = {
@@ -130,56 +113,51 @@ class PatientView extends Component {
     console.error({ code, routine, hint, ...rest })
   }
 
+  itemModalCallback = ({ action, uuid, success }) => {
+    this.setState({
+      isShowingItemModal: false,
+      mode: ViewMode.VIEW,
+      activeItem: {}
+    })
+    if (success)
+      Alert.success(`${action} patient <b>${uuid}</b> was successful.`, {
+        timeout: 4000,
+        html: true
+      })
+    else
+      Alert.error(`couldn't ${action} patient. An error occurred`, {
+        timeout: 4000
+      })
+    this.search()
+  }
+
   render() {
-    const { items, search, loading, paging } = this.state
+    const {
+      items,
+      search,
+      loading,
+      paging,
+      isShowingItemModal,
+      mode,
+      activeItem
+    } = this.state
     return (
       <ViewSplit>
-        <Modal
-          isOpen={this.state.isShowingItemModal}
-          onRequestClose={() =>
-            this.setState({ isShowingItemModal: false, mode: ViewMode.VIEW })
-          }
-          style={customStyles}
-          contentLabel="Item Modal"
-        >
-          {this.state.mode === ViewMode.ADD ? (
-            <h2>New patient:</h2>
-          ) : (
-            <React.Fragment>
-              <h2>Patient:</h2>
-              <p className="uuid">sdfvjsfdjov-34r234f34-23d2ef4</p>
-            </React.Fragment>
-          )}
-
-          <ModalSplit>
-            <div className="floating-label">
-              <input placeholder="Given name" type="text" autoComplete="off" />
-              <label>Given name:</label>
-            </div>
-            <div className="floating-label">
-              <input placeholder="Family name" type="text" autoComplete="off" />
-              <label>Family name:</label>
-            </div>
-            <div className="floating-label">
-              <input placeholder="Email" type="text" autoComplete="off" />
-              <label>Email:</label>
-            </div>
-          </ModalSplit>
-          <ModalSplit>
-            <div className="floating-label">
-              <input placeholder="Country" type="text" autoComplete="off" />
-              <label>Country:</label>
-            </div>
-            <div className="floating-label">
-              <input placeholder="State" type="text" autoComplete="off" />
-              <label>State:</label>
-            </div>
-            <div className="floating-label">
-              <input placeholder="City" type="text" autoComplete="off" />
-              <label>City:</label>
-            </div>
-          </ModalSplit>
-        </Modal>
+        {isShowingItemModal && (
+          <PatientItemModal
+            item={activeItem}
+            showing={isShowingItemModal}
+            mode={mode}
+            onModalClose={() =>
+              this.setState({
+                isShowingItemModal: false,
+                mode: ViewMode.VIEW,
+                activeItem: {}
+              })
+            }
+            callback={this.itemModalCallback}
+          />
+        )}
         <Panel>
           <SearchArea>
             <SearchInput
@@ -195,7 +173,11 @@ class PatientView extends Component {
               />
             </InputIconSpan>
           </SearchArea>
-          {loading ? <LoadingIndicator /> : <ItemList items={items} />}
+          {loading ? (
+            <LoadingIndicator />
+          ) : (
+            <ItemList items={items} self={this} />
+          )}
           <PaginationArea>
             <Pagination
               selectComponentClass={Select}
@@ -212,7 +194,11 @@ class PatientView extends Component {
         </Panel>
         <ViewDock
           onAddClick={() =>
-            this.setState({ isShowingItemModal: true, mode: ViewMode.ADD })
+            this.setState({
+              isShowingItemModal: true,
+              mode: ViewMode.ADD,
+              activeItem: {}
+            })
           }
           onFilterClick={() => this.setState({ isShowingFilterModal: true })}
         />
@@ -223,16 +209,10 @@ class PatientView extends Component {
 
 export default PatientView
 
-const ModalSplit = styled.div`
-  display: flex;
-  /* height: calc(100vh - 22px); */
-  /* align-items: center; */
-`
-
-const ItemList = ({ items }) => (
+const ItemList = ({ items, self }) => (
   <ItemContainer>
     {items.length > 0 ? (
-      items.map(item => <Item data={item} key={item.uuid} />)
+      items.map(item => <Item data={item} key={item.uuid} self={self} />)
     ) : (
       <NoResultsFound />
     )}
@@ -240,11 +220,21 @@ const ItemList = ({ items }) => (
 )
 
 const Item = ({
-  data: { uuid, given_name, family_name, sex, birthdate, address }
+  data: { uuid, given_name, family_name, sex, birthdate, address },
+  data,
+  self
 }) => (
   <ItemDiv>
     <div style={{ flex: 3 }}>
-      <h2>
+      <h2
+        onClick={() =>
+          self.setState({
+            isShowingItemModal: true,
+            mode: ViewMode.VIEW,
+            activeItem: data
+          })
+        }
+      >
         {given_name} {family_name}
       </h2>
       <p className="uuid">{uuid}</p>

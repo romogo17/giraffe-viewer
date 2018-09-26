@@ -97,6 +97,11 @@ export const ItemDiv = styled.div`
     border-left: solid 4px #82d8d8;
     border-right: solid 4px #82d8d8;
   }
+
+  & h2:hover {
+    color: #82d8d8;
+    cursor: pointer;
+  }
 `
 
 export const Meta = styled.div`
@@ -214,4 +219,8 @@ export const PaginationArea = styled.div`
     border-color: #4e5966;
     color: white;
   }
+`
+
+export const ModalSplit = styled.div`
+  display: flex;
 `
