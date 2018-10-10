@@ -9,10 +9,9 @@ import 'react-s-alert/dist/s-alert-css-effects/flip.css'
 
 import Dock from './components/Dock'
 import PatientView from './components/views/PatientView'
+import StudyView from './components/views/StudyView'
 import ProtectedRoute from './components/ProtectedRoute'
 import SettingsView from './components/views/SettingsView'
-
-const Study = ({ match }) => <div>Study {match.params.uuid}</div>
 
 const Series = props => (
   <div>
@@ -59,7 +58,11 @@ const Routes = () => (
     <Switch>
       <Route exact path="/" render={() => <Redirect to="/patient" />} />
       <ProtectedRoute path="/patient" component={PatientView} title="Patient" />
-      <ProtectedRoute path="/study/:uuid?" component={Study} title="Study" />
+      <ProtectedRoute
+        path="/study/:uuid?"
+        component={StudyView}
+        title="Study"
+      />
       <ProtectedRoute path="/series" component={Series} title="Series" />
       <ProtectedRoute path="/instance" component={Instance} title="Instance" />
       <ProtectedRoute path="/region" component={Region} title="Region" />
