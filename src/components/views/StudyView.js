@@ -14,7 +14,7 @@ import {
   faBinoculars
 } from '@fortawesome/free-solid-svg-icons'
 import StudyModel from '../../model/StudyModel'
-import PatientItemModal from '../modals/PatientItemModal'
+import StudyItemModal from '../modals/StudyItemModal'
 import ViewDock from '../ViewDock'
 import { ViewMode } from '../../utils/Enums'
 import {
@@ -52,8 +52,7 @@ class StudyView extends Component {
   }
   timer = null
 
-  componentDidMount = () =>
-    console.log(this.props.match.params.uuid) || this.search()
+  componentDidMount = () => this.search()
 
   search = () => {
     const { search, paging } = this.state
@@ -145,7 +144,7 @@ class StudyView extends Component {
     return (
       <ViewSplit>
         {isShowingItemModal && (
-          <PatientItemModal
+          <StudyItemModal
             item={activeItem}
             showing={isShowingItemModal}
             mode={mode}

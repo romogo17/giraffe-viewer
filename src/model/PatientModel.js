@@ -59,6 +59,13 @@ const PatientModel = {
   baseQuery() {
     return knex.select('uuid').from(tableName)
   },
+  exists(keyword) {
+    return knex
+      .select(1)
+      .from('patient')
+      .where(knex.raw('uuid::varchar = ?', `${keyword}`))
+      .then(result => result)
+  },
   buildQuery(queryBuilder) {
     return filters => {
       return keyword => {

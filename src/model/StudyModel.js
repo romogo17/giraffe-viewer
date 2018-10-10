@@ -8,6 +8,7 @@ const tableName = 'study'
 const orderColumn = 'created_at'
 const columns = [
   'study.uuid',
+  'study.patient_uuid',
   'study.description',
   'study.summary',
   'study.created_at',
@@ -62,14 +63,7 @@ const StudyModel = {
       .then(result => {
         console.log('MODEL: Returning values for keys', result)
         console.log('________________________________________________________')
-        return result.sort(
-          (a, b) =>
-            a.given_name > b.given_name
-              ? 1
-              : a.given_name < b.given_name
-                ? -1
-                : 0
-        )
+        return result.sort((a, b) => b.created_at - a.created_at)
       })
   },
   baseQuery() {
@@ -108,20 +102,28 @@ const StudyModel = {
       .catch(err => console.log({ err }))
   },
   updateStudy(study) {
-    return knex(tableName)
+    console.log({ study })
+    const query = knex(tableName)
       .returning('uuid')
       .where('uuid', study.uuid)
       .update(study)
-      .then(result => {
-        const uuid = result[0]
-        cache.del(uuid)
-        return uuid
-      })
+    console.log(query.toString())
+
+    return query.then(result => {
+      const uuid = result[0]
+      cache.del(uuid)
+      return uuid
+    })
   },
   emptyStudy() {
     return {
-      description: ''
+      description: '',
+      patient_uuid: ''
     }
+  },
+  pruneStudy(item) {
+    const { age_at_study, series_count, ...pruned } = item
+    return pruned
   }
 }
 

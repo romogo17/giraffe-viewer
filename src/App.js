@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route, Switch, Redirect, Link } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import Alert from 'react-s-alert'
 
@@ -13,17 +13,8 @@ import StudyView from './components/views/StudyView'
 import ProtectedRoute from './components/ProtectedRoute'
 import SettingsView from './components/views/SettingsView'
 
-const Series = props => (
-  <div>
-    Series{' '}
-    <Link
-      to={{
-        pathname: '/study/13'
-      }}
-    >
-      GOTO Study 13
-    </Link>
-  </div>
+const Series = ({ match }) => (
+  <div>Series {match.params.uuid ? ` of study ${match.params.uuid}` : ''}</div>
 )
 
 const Instance = () => <div>Instance</div>
@@ -63,8 +54,12 @@ const Routes = () => (
         component={StudyView}
         title="Study"
       />
-      <ProtectedRoute path="/series" component={Series} title="Series" />
-      <ProtectedRoute path="/instance" component={Instance} title="Instance" />
+      <ProtectedRoute path="/series/:uuid?" component={Series} title="Series" />
+      <ProtectedRoute
+        path="/instance/:uuid?"
+        component={Instance}
+        title="Instance"
+      />
       <ProtectedRoute path="/region" component={Region} title="Region" />
       <Route path="/settings" component={SettingsView} />
     </Switch>
