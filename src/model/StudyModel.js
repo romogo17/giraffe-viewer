@@ -16,17 +16,15 @@ const columns = [
 ]
 
 /**
- * knex.column(knex.raw('to_char("dateCreated", \'YYYY-MM-DD\') as "dateCreated"'));
- *
-    SELECT
-      st.uuid, st.description, st.summary, st.created_at, st.updated_at,
-      age(st.created_at, pt.birthdate) as age_at_study,
-      count(sr.uuid) as series_count
-    FROM
-      med_img.study st
-    JOIN med_img.patient pt ON pt.uuid = st.patient_uuid
-    LEFT JOIN med_img.series sr ON st.uuid = sr.study_uuid
-    GROUP BY st.uuid, pt.birthdate;
+  SELECT
+    st.uuid, st.description, st.summary, st.created_at, st.updated_at,
+    age(st.created_at, pt.birthdate) as age_at_study,
+    count(sr.uuid) as series_count
+  FROM
+    med_img.study st
+  JOIN med_img.patient pt ON pt.uuid = st.patient_uuid
+  LEFT JOIN med_img.series sr ON st.uuid = sr.study_uuid
+  GROUP BY st.uuid, pt.birthdate;
  */
 
 const StudyModel = {
@@ -69,6 +67,13 @@ const StudyModel = {
   baseQuery() {
     return knex.select('uuid').from(tableName)
   },
+  exists(keyword) {
+    return knex
+      .select(1)
+      .from(tableName)
+      .where(knex.raw('uuid::varchar = ?', `${keyword}`))
+      .then(result => result)
+  },
   buildQuery(queryBuilder) {
     return filters => {
       return keyword => {
@@ -102,18 +107,15 @@ const StudyModel = {
       .catch(err => console.log({ err }))
   },
   updateStudy(study) {
-    console.log({ study })
-    const query = knex(tableName)
+    return knex(tableName)
       .returning('uuid')
       .where('uuid', study.uuid)
       .update(study)
-    console.log(query.toString())
-
-    return query.then(result => {
-      const uuid = result[0]
-      cache.del(uuid)
-      return uuid
-    })
+      .then(result => {
+        const uuid = result[0]
+        cache.del(uuid)
+        return uuid
+      })
   },
   emptyStudy() {
     return {

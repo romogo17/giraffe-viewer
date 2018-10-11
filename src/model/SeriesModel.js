@@ -4,32 +4,39 @@ import Cache from './Cache'
 const ttl = 60 * 60 * 1 // 1 hour
 const cache = new Cache(ttl)
 
-const tableName = 'patient'
-const orderColumn = 'given_name'
+const tableName = 'series'
+const orderColumn = 'created_at'
 const columns = [
-  'uuid',
-  'given_name',
-  'family_name',
-  'other_ids',
-  'address',
-  'sex',
-  'birthdate',
-  'created_at',
-  'updated_at',
-  'email'
+  'series.uuid',
+  'series.study_uuid',
+  'series.description',
+  'series.laterality',
+  'series.body_part',
+  'series.created_at',
+  'series.updated_at'
 ]
 
-const PatientModel = {
-  getPatients({ keyword = '', filters = [] }, { page = 1, pageSize = 7 }) {
-    console.log('Get Patients', { keyword, filters, page, pageSize })
+/**
+  SELECT
+    se.uuid, se.study_uuid, se.description, se.laterality, se.body_part, se.created_at, se.updated_at,
+    count(ins.uuid) AS instance_count
+  FROM
+    med_img.series se
+  LEFT JOIN med_img.instance ins ON se.uuid = ins.series_uuid
+  GROUP BY se.uuid;
+ */
+
+const SeriesModel = {
+  getSeries({ keyword = '', filters = [] }, { page = 1, pageSize = 7 }) {
+    console.log('Get Series', { keyword, filters, page, pageSize })
     return this.buildQuery(this.baseQuery())(filters)(keyword)
-      .orderBy(orderColumn, 'asc')
+      .orderBy(orderColumn, 'desc')
       .limit(pageSize)
       .offset((page - 1) * pageSize)
       .then(rows => rows.map(r => r.uuid))
-      .then(keys => this.fetchPatients(keys))
+      .then(keys => this.fetchSeries(keys))
   },
-  fetchPatients(keys = []) {
+  fetchSeries(keys = []) {
     console.log('MODEL: Keys I need to fetch', keys)
     return cache
       .mget(keys, missingKeys => {
@@ -37,7 +44,10 @@ const PatientModel = {
         return knex
           .select(columns)
           .from(tableName)
-          .whereIn('uuid', missingKeys)
+          .count('instance.uuid as instance_count')
+          .leftJoin('instance', 'series.uuid', 'instance.series_uuid')
+          .whereIn('series.uuid', missingKeys)
+          .groupBy('series.uuid')
           .then(rows => {
             console.log('STORAGE: Values returned from storage', rows)
             return rows
@@ -46,14 +56,7 @@ const PatientModel = {
       .then(result => {
         console.log('MODEL: Returning values for keys', result)
         console.log('________________________________________________________')
-        return result.sort(
-          (a, b) =>
-            a.given_name > b.given_name
-              ? 1
-              : a.given_name < b.given_name
-                ? -1
-                : 0
-        )
+        return result.sort((a, b) => b.created_at - a.created_at)
       })
   },
   baseQuery() {
@@ -80,51 +83,53 @@ const PatientModel = {
             ? queryBuilder
                 .where(
                   knex.raw(
-                    'LOWER(given_name) like ?',
+                    'LOWER(description) like ?',
                     `%${keyword.toLowerCase()}%`
                   )
                 )
                 .orWhere(
                   knex.raw(
-                    'LOWER(family_name) like ?',
+                    'LOWER(body_part) like ?',
                     `%${keyword.toLowerCase()}%`
                   )
                 )
                 .orWhere(knex.raw('uuid::varchar like ?', `${keyword}%`))
-            : //.orWhere('uuid', keyword)
-              queryBuilder
+                .orWhere(knex.raw('study_uuid::varchar = ?', `${keyword}`))
+            : queryBuilder
         return queryBuilder
       }
     }
   },
-  insertPatient(patient) {
+  insertSeries(series) {
     return knex(tableName)
       .returning('uuid')
-      .insert(patient)
+      .insert(series)
       .then(result => result[0])
       .catch(err => console.log({ err }))
   },
-  updatePatient(patient) {
+  updateSeries(series) {
     return knex(tableName)
       .returning('uuid')
-      .where('uuid', patient.uuid)
-      .update(patient)
+      .where('uuid', series.uuid)
+      .update(series)
       .then(result => {
         const uuid = result[0]
         cache.del(uuid)
         return uuid
       })
   },
-  emptyPatient() {
+  emptySeries() {
     return {
-      given_name: '',
-      family_name: '',
-      address: { country: '', state: '', city: '' },
-      sex: '',
-      birthdate: '',
-      email: ''
+      description: '',
+      laterality: '',
+      body_part: '',
+      study_uuid: ''
     }
+  },
+  pruneSeries(item) {
+    const { instance_count, ...pruned } = item
+    return pruned
   }
 }
 
-export default PatientModel
+export default SeriesModel
