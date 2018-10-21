@@ -264,3 +264,139 @@ const faker = require('faker')
 //     `('${uuid}', '${studyUuid}','${laterality}', '${description}', 'BREAST'),`
 //   )
 // }
+
+/**
+ * Instance Fake Data
+ *
+ * First we need the Series uuids to generate the mock data
+ *
+ *      \copy (select uuid from med_img.series) To '~/Desktop/test.csv' With CSV;
+ *      awk '{print "\047"$1"\047"}' < ~/Desktop/test.csv | paste -s -d, -
+ */
+// const seriesUuids = [
+//   '086c8575-49b8-47b4-82e5-4203a5064835',
+//   '873a975d-4a78-46b6-9516-9ab2be9445c2',
+//   'eff819f4-682e-465c-9e25-6051b0c7563b',
+//   '6a064c83-4245-42cc-bc51-189f991ed44f',
+//   '731e98bc-9143-4c70-8214-f242cf0bf30f',
+//   'aaf49f28-5bcd-4aa5-becd-4562901d639f',
+//   '8d8f5152-f1db-4d80-822c-1ada85f5aee7',
+//   '7bd8058a-cb06-433f-8d02-59b75b731d86',
+//   '514e09c1-4fad-406e-ae73-d2e824f02d9d',
+//   '933ecf20-67f9-48b3-8760-11fa0356d36d',
+//   'c23e7e16-41b5-4939-8bba-bebe036e916e',
+//   'e7c3fdfe-1f74-4334-a771-6f7ab102f623',
+//   '3b4f343f-0178-4d8d-9644-5f7646e736aa',
+//   'b6cc05fa-064c-4c58-8424-ce46d0573816',
+//   '9a2baf63-99f6-4d39-86b1-936e1dbea24a',
+//   'd3b51d98-e910-4c41-b3ed-8d581e8d3512',
+//   'bad268f0-2045-49f6-babe-bbb48f3bceac',
+//   '3e1e21a3-aeba-4b57-9018-7ee722cfff40',
+//   '0660c2a0-db83-4797-8765-12fcc117384d',
+//   '4ca3e92f-ea08-4bda-b329-e86d19c10321',
+//   'd2032c30-5c1c-4de0-b8ef-4f015b9f3ff2',
+//   '46d6f81d-34cf-4cf7-9e88-c851bb080241',
+//   'a92a358d-94db-4d4a-8ec8-1febe5f96d79',
+//   'ed72be56-01bf-47e4-a418-62493c96b2ac',
+//   'eab86f02-7b1c-4ac7-ae02-d19dd107b031',
+//   '07219931-97ba-4b38-b3c0-e5ed616de79b',
+//   '69b09f4a-e982-42b0-9d89-b4aea9d92358',
+//   'd94b3cba-8d86-457d-8514-9f01501cce72',
+//   'a313fe0b-01a0-4e92-9e35-5037bf6211ea',
+//   '91da3aa7-50bf-459a-8cb1-108562f4aa79',
+//   'aa1505e5-576f-4d9d-86b8-ae39c370e56b',
+//   'c3f6a6e2-3ed1-4c6a-bfc0-d8e6af485c70',
+//   '32c3df03-41f9-4844-b18d-1682df7e2984',
+//   '95fdc0f3-7b15-4fc1-921a-2d8cb41f1eaf',
+//   '02895b0c-8c37-450e-92dc-bf8ab63d0cfd',
+//   '8b0916bb-a0a3-49e9-bb4b-ae63032ae510',
+//   '183bff6f-e93b-44e5-a3e1-c359893b2ba6',
+//   '00928ad4-f70e-423c-bdbc-433c61dc5243',
+//   'cc062cce-8310-4232-af56-114a7c435f9f',
+//   'c5f369fb-5639-4035-8229-f80d11a4dfcd',
+//   'ffdd3379-bf70-4bf1-9a55-9cbdf3741c1f',
+//   '066f9ac6-7aa0-4546-b1d4-6cbb71e7adbc',
+//   '4e20ca7c-cc0e-4a20-816c-2c881eed1075',
+//   '7c20978f-b193-4033-8363-2c1c71460ca4',
+//   'd36125da-e921-4473-b282-c64e8eed13ff',
+//   'fb246310-317a-4ee9-a8ea-1c772eabcbde',
+//   'bd79fe90-d363-4fc6-842c-b8db0d342142',
+//   '7ca2828e-5ffa-4bbd-b21b-f7409c240e41',
+//   'c0de4864-4d92-4beb-8384-cf89ed084ee5',
+//   '4eee9a45-da62-4eaa-8536-1d823f677a4b',
+//   '8a3e99de-9e98-4add-bf8c-b4d259f6499b',
+//   '6e499da5-38b8-414a-a789-7b123acdf8e7',
+//   '156dfaa7-aabf-4092-a0cf-b39e9272cda9',
+//   '3aa743e3-d4ea-4e68-aa08-6752a52ebcb7',
+//   'fa54f83f-c4e9-4348-bf8f-f5bebf92d6c1',
+//   'e23b9bfc-7d73-463d-95c0-12d60e4a0034',
+//   '4a3528b1-c8d2-4436-a536-a62c3649f8ac',
+//   'b29a05db-bf87-4c6d-aec6-dc06d3aa6828',
+//   'e26d100d-a409-41e4-8eee-c1b2c21ca372',
+//   'cabd5f07-a971-4d69-9b7e-1d8d2f5ea8f0',
+//   '2c2e79a2-3688-480b-a6cd-a21e7b51e557',
+//   '0b0417e3-b595-4a2a-8627-ebf1933a918a',
+//   '6d147c5a-160a-4ca4-9f81-fd8fce58af90',
+//   'df69bee3-9bad-44a4-9499-045b428a8dc7',
+//   '409c458d-c068-463c-bcf9-dbe88895e06a',
+//   '002a6635-1b55-4b99-921e-a410ffb94b9c',
+//   'a1a5cc4c-73f3-443c-a018-5c5c2b47a61d',
+//   '45d44dcd-1d98-48c2-97d2-41a1f27770bb',
+//   '0b5c5ca6-29d6-43a1-a040-159f5cf37f1c',
+//   'f2e00cfc-9ed9-4257-a6ce-d61fdbd7cea9',
+//   'bf58ac9d-b7b3-47db-9694-0cabf48c73d8',
+//   'ac0612d9-0676-4fc8-9f85-098b1b6cd2d6',
+//   '4bbae5ec-674b-4361-9ff0-61b8412241bb',
+//   'f2211ba8-0043-4703-8f27-dfdbe1d9a0bb',
+//   '3bf2c4fd-4b15-43d9-b97d-25870d3e1adb',
+//   '06bf553e-149a-4d3c-a0c9-4b444c136e2c',
+//   'd2ef13ef-438b-4e6b-9083-01d3b56eaa9b',
+//   '1fe311ce-b791-4515-a0ed-70e11543266f',
+//   'f0402379-c91e-4f84-a920-c16f16cd152b',
+//   'c057bdce-ec4a-4153-bdfe-2e6d4efa4a81',
+//   'fed91e3b-67fa-4be1-a981-4da40f8d43f5',
+//   'f7874a6d-e1fb-4ab5-b948-b88fe602416c',
+//   'd05bf8ec-6eca-4eea-99b0-7595156b8709',
+//   '6978d320-2976-46fd-8eaf-4a7becf94b63',
+//   '435685b2-0e71-43c7-b2e5-7a013d8d81f1',
+//   'b5a25fc4-3d27-407f-bfcc-3b484332aedd',
+//   '04d50767-d52a-4bcd-9f4a-a9b5cf2c1f07',
+//   '882e5139-9899-4fca-9cc8-e59b1510b5a5',
+//   'bea064ac-e303-41a3-970f-289c30e73684',
+//   'aafc83e0-8fa2-4172-947a-29ced64fcfc1',
+//   'bdca5cd7-076f-4608-81ba-6def0a4ab94a',
+//   '95825a35-934d-4fff-b8f7-1f9086b103a9',
+//   'aa1c6de4-44de-4b35-b16e-96e4a6f93c13',
+//   'b8e855bc-726e-432f-8722-3324d7938c36',
+//   '73f00da3-8305-4aa8-8b61-212c6c24836d',
+//   '6a33d90c-7024-4572-ad59-2b1fdf471c8d',
+//   'bf8d12b8-3885-4281-93b4-752040fdd041',
+//   '84c10740-64b5-4cdb-9246-75417a6ae2e2',
+//   '3d77bd95-e708-4227-9d23-37db5c3eafd9',
+//   '7574620d-4a7b-40ef-95bb-ccdb3fa10b89',
+//   '5d74f3a1-6c62-492e-ac55-c9ab6309f16b',
+//   'ea56b117-7f49-43a0-bf30-769236f2e6b4',
+//   'e69ac839-29af-4333-b257-4c342d9a8e40'
+// ]
+// const filenames = [
+//   'mdb024.pgm',
+//   'mdb134.pgm',
+//   'mdb219.pgm',
+//   'mdb227.pgm',
+//   'mdb267.pgm',
+//   'mdb028.pgm',
+//   'mdb155.pgm',
+//   'mdb222.pgm',
+//   'mdb231.pgm'
+// ]
+// const path =
+//   '/Users/ro/U/[ Asistencia ] - Proyecto de Investigacion/Source_Images/'
+// for (i = 0; i < 50; i++) {
+//   let uuid = faker.random.uuid()
+//   let seriesUuid = faker.random.arrayElement(seriesUuids)
+//   let imagePath = path + faker.random.arrayElement(filenames)
+
+//   console.log(
+//     `('${uuid}', '${seriesUuid}', pgcv_io.image_read('${imagePath}')),`
+//   )
+// }

@@ -5,6 +5,10 @@ export const ViewSplit = styled.div`
   height: calc(100vh - 22px);
   align-items: stretch;
   justify-content: flex-end;
+
+  &.instance {
+    justify-content: flex-start;
+  }
 `
 
 export const Panel = styled.div`
@@ -61,6 +65,11 @@ export const ItemContainer = styled.div`
   align-items: stretch;
   width: 100%;
 
+  &.instance {
+    flex: none;
+    width: 300px;
+  }
+
   /* This makes the container scrollable */
   overflow: auto;
   flex-grow: 1;
@@ -82,6 +91,12 @@ export const ItemDiv = styled.div`
   margin: 0 2rem;
   padding: 0 2rem;
   border-bottom: solid 1px #4e5966;
+
+  &.instance {
+    height: 250px;
+    margin: 0 0.5rem;
+    padding: 0 0.5rem;
+  }
 
   flex: 0 0 auto; /* grow, shrink, basis */
   display: flex;

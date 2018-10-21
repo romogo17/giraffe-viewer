@@ -190,7 +190,7 @@ class SeriesItemModal extends Component {
             {mode === ViewMode.VIEW && (
               <Link
                 to={{
-                  pathname: `/series/${item.uuid}`
+                  pathname: `/instance/${item.uuid}`
                 }}
                 className="see-studies"
                 style={{ flex: 2 }}

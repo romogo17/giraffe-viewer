@@ -13,8 +13,7 @@ import StudyView from './components/views/StudyView'
 import SeriesView from './components/views/SeriesView'
 import ProtectedRoute from './components/ProtectedRoute'
 import SettingsView from './components/views/SettingsView'
-
-const Instance = () => <div>Instance</div>
+import InstanceView from './components/views/InstanceView'
 
 const Region = () => <div>Region</div>
 
@@ -58,10 +57,10 @@ const Routes = () => (
       />
       <ProtectedRoute
         path="/instance/:uuid?"
-        component={Instance}
+        component={InstanceView}
         title="Instance"
       />
-      <ProtectedRoute path="/region" component={Region} title="Region" />
+      <ProtectedRoute path="/region/:uuid?" component={Region} title="Region" />
       <Route path="/settings" component={SettingsView} />
     </Switch>
   </View>
