@@ -13,13 +13,12 @@ import {
   faBinoculars
 } from '@fortawesome/free-solid-svg-icons'
 import ThumbnailModel from '../../model/ThumbnailModel'
-import InstanceModel from '../../model/InstanceModel'
 import SeriesItemModal from '../modals/SeriesItemModal'
 import ViewDock from '../ViewDock'
 import { ViewMode } from '../../utils/Enums'
+import CornerstoneElement from '../CornerstoneElement'
 import {
   ViewSplit,
-  InstanceSplit,
   Panel,
   SearchArea,
   SearchInput,
@@ -48,7 +47,14 @@ class InstanceView extends Component {
     isShowingItemModal: false,
     isShowingFilterModal: false,
     activeItem: {},
-    mode: ViewMode.VIEW
+    mode: ViewMode.VIEW,
+    stack: {
+      imageIds: [
+        'pgcv://861f4e80-6e3a-4353-a6f1-46d441a10b18',
+        'pgcv://99fb909a-977d-4d35-8e36-bafe8485f2c5'
+      ],
+      currentImageIdIndex: 0
+    }
   }
   timer = null
 
@@ -139,7 +145,8 @@ class InstanceView extends Component {
       paging,
       isShowingItemModal,
       mode,
-      activeItem
+      activeItem,
+      stack
     } = this.state
     return (
       <ViewSplit>
@@ -178,7 +185,7 @@ class InstanceView extends Component {
           ) : (
             <ViewSplit className="instance">
               <ItemList items={items} self={this} />
-              <div style={{ flex: '1', backgroundColor: 'red' }}>Hola</div>
+              <CornerstoneElement stack={{ ...stack }} />
             </ViewSplit>
           )}
           <PaginationArea>
@@ -239,6 +246,7 @@ const Item = ({
             activeItem: data
           })
         }
+        alt={uuid}
       />
       <p className="uuid">{uuid}</p>
     </div>

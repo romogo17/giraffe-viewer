@@ -1717,6 +1717,24 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+cornerstone-core@^2.2.6:
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/cornerstone-core/-/cornerstone-core-2.2.6.tgz#a461face67a78d89b2bab3abbb17763ae9a2c20a"
+
+cornerstone-math@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/cornerstone-math/-/cornerstone-math-0.1.6.tgz#93b3ad72fae815383cce5180af23836550200c3a"
+
+cornerstone-tools@^2.3.9:
+  version "2.3.9"
+  resolved "https://registry.yarnpkg.com/cornerstone-tools/-/cornerstone-tools-2.3.9.tgz#8deaa485e649817d7aed2e2ccdea5fe61aeeaff5"
+  dependencies:
+    cornerstone-math "^0.1.6"
+
+cornerstone-web-image-loader@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/cornerstone-web-image-loader/-/cornerstone-web-image-loader-2.1.0.tgz#3ab6a2f87bdf2ffb8457753e9139459b87a90f82"
+
 cosmiconfig@^2.1.0, cosmiconfig@^2.1.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-2.2.2.tgz#6173cebd56fac042c1f4390edf7af6c07c7cb892"

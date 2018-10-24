@@ -10,15 +10,27 @@ class Cache {
     })
   }
 
-  get(key, storeFunction) {
-    const value = this.cache.get(key)
-    if (value) {
-      return Promise.resolve(value)
+  get(neededKey, storeFunction) {
+    const cached = this.cache.get(neededKey)
+    const cachedKey = cached ? cached : ''
+    console.log('CACHE: Key requested ', neededKey)
+    console.log('CACHE: 1. Key I have ', cachedKey)
+
+    if (cachedKey !== '') {
+      console.log('CACHE: 2. I have the key in cache ')
+      return Promise.resolve(cached)
     }
 
-    return storeFunction().then(result => {
-      this.cache.set(key, result)
-      return result
+    // return storeFunction(neededKey).then(result => {
+    //   this.cache.set(neededKey, result)
+    //   return result
+    // })
+
+    console.log('CACHE: 2. Missing key ', neededKey)
+    return storeFunction(neededKey).then(value => {
+      console.log('CACHE: 3. Caching new key from storage ', value)
+      this.cache.set(value.uuid, value)
+      return value
     })
   }
 
