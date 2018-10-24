@@ -51,9 +51,8 @@ class CornerstoneElement extends Component {
     this.element = null
 
     this.state = {
-      stack: props.stack,
       viewport: cornerstone.getDefaultViewport(null, undefined),
-      imageId: props.stack.imageIds[0]
+      imageId: props.imageId
     }
 
     this.onImageRendered = this.onImageRendered.bind(this)
@@ -95,39 +94,27 @@ class CornerstoneElement extends Component {
     if (!this.element) return
 
     const viewport = cornerstone.getViewport(this.element)
-    // console.log(viewport)
     this.setState({
       viewport
     })
-    // console.log(this.state.viewport)
   }
 
   onNewImage() {
     if (!this.element) return
-    const enabledElement = cornerstone.getEnabledElement(this.element)
-    this.setState({
-      imageId: enabledElement.image.imageId
-    })
   }
 
   componentDidMount() {
     if (!this.element) return
 
     const element = this.element
-    // console.log({ element })
 
-    // Load the first image in the stack
+    // Load the image
     cornerstone.loadImage(this.state.imageId).then(image => {
       // Enable the DOM Element for use with Cornerstone
       cornerstone.enable(element)
 
       // Display the first image
       cornerstone.displayImage(element, image)
-
-      // Add the stack tool state to the enabled element
-      const stack = this.props.stack
-      cornerstoneTools.addStackStateManager(element, ['stack'])
-      cornerstoneTools.addToolState(element, 'stack', stack)
 
       cornerstoneTools.mouseInput.enable(element)
       cornerstoneTools.mouseWheelInput.enable(element)
@@ -146,29 +133,18 @@ class CornerstoneElement extends Component {
     if (!this.element) return
 
     const element = this.element
+
     element.removeEventListener(
       'cornerstoneimagerendered',
       this.onImageRendered
     )
-
     element.removeEventListener('cornerstonenewimage', this.onNewImage)
-
     window.removeEventListener('resize', this.onWindowResize)
-
     cornerstone.disable(element)
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!this.element) return
-
-    const stackData = cornerstoneTools.getToolState(this.element, 'stack')
-    const stack = stackData.data[0]
-    stack.currentImageIdIndex = this.state.stack.currentImageIdIndex
-    stack.imageIds = this.state.stack.imageIds
-    cornerstoneTools.addToolState(this.element, 'stack', stack)
-
-    //const imageId = stack.imageIds[stack.currentImageIdIndex];
-    //cornerstoneTools.scrollToIndex(this.element, stack.currentImageIdIndex);
   }
 }
 

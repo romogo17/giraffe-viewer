@@ -10,7 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faSearch,
   faTimes,
-  faBinoculars
+  faBinoculars,
+  faHandPointer
 } from '@fortawesome/free-solid-svg-icons'
 import ThumbnailModel from '../../model/ThumbnailModel'
 import SeriesItemModal from '../modals/SeriesItemModal'
@@ -30,6 +31,7 @@ import {
 } from '../ViewUtils'
 
 const WAIT_INTERVAL = 500
+const INSTANCE_WAIT = 100
 const ENTER_KEY = 13
 
 class InstanceView extends Component {
@@ -48,13 +50,8 @@ class InstanceView extends Component {
     isShowingFilterModal: false,
     activeItem: {},
     mode: ViewMode.VIEW,
-    stack: {
-      imageIds: [
-        'pgcv://861f4e80-6e3a-4353-a6f1-46d441a10b18',
-        'pgcv://99fb909a-977d-4d35-8e36-bafe8485f2c5'
-      ],
-      currentImageIdIndex: 0
-    }
+    imageId: null,
+    instanceWait: false
   }
   timer = null
 
@@ -146,7 +143,8 @@ class InstanceView extends Component {
       isShowingItemModal,
       mode,
       activeItem,
-      stack
+      imageId,
+      instanceWait
     } = this.state
     return (
       <ViewSplit>
@@ -185,7 +183,13 @@ class InstanceView extends Component {
           ) : (
             <ViewSplit className="instance">
               <ItemList items={items} self={this} />
-              <CornerstoneElement stack={{ ...stack }} />
+              {!imageId ? (
+                <NoInstanceSelected />
+              ) : instanceWait ? (
+                <LoadingIndicator />
+              ) : (
+                <CornerstoneElement imageId={imageId} />
+              )}
             </ViewSplit>
           )}
           <PaginationArea>
@@ -239,13 +243,17 @@ const Item = ({
       <img
         width="170px"
         src={thumbnail_uri}
-        onClick={() =>
+        onClick={() => {
           self.setState({
-            isShowingItemModal: true,
-            mode: ViewMode.VIEW,
-            activeItem: data
+            imageId: 'pgcv://' + uuid,
+            instanceWait: true
           })
-        }
+          setTimeout(() => {
+            self.setState({
+              instanceWait: false
+            })
+          }, INSTANCE_WAIT)
+        }}
         alt={uuid}
       />
       <p className="uuid">{uuid}</p>
@@ -261,6 +269,17 @@ const NoResultsFound = () => (
       style={{ color: '#82d8d8' }}
     />
     <h1>No results found</h1>
+  </CenteredContainer>
+)
+
+const NoInstanceSelected = () => (
+  <CenteredContainer>
+    <FontAwesomeIcon
+      icon={faHandPointer}
+      size="4x"
+      style={{ color: '#82d8d8' }}
+    />
+    <h1>No instance selected</h1>
   </CenteredContainer>
 )
 

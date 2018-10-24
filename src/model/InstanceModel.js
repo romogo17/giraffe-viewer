@@ -11,7 +11,6 @@ const columns = ['uuid', 'series_uuid', 'created_at', 'updated_at']
 const InstanceModel = {
   // Loads an image given an instance uuid
   loadImage(imageId) {
-    console.log('AQUI PA!', imageId)
     const promise = new Promise((resolve, reject) => {
       fetchInstance(imageId.substr(7)).then(instance => {
         const imageObject = createImage(instance)
