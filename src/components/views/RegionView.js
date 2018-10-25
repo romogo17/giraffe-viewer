@@ -10,14 +10,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faSearch,
   faTimes,
-  faBinoculars,
-  faHandPointer
+  faBinoculars
 } from '@fortawesome/free-solid-svg-icons'
-import ThumbnailModel from '../../model/ThumbnailModel'
+import RegionModel from '../../model/RegionModel'
 // import SeriesItemModal from '../modals/SeriesItemModal'
-import InstanceDock from '../InstanceDock'
+// import ViewDock from '../ViewDock'
 // import { ViewMode } from '../../utils/Enums'
-import CornerstoneElement from '../CornerstoneElement'
 import {
   ViewSplit,
   Panel,
@@ -27,14 +25,14 @@ import {
   ItemContainer,
   CenteredContainer,
   ItemDiv,
+  Meta,
   PaginationArea
 } from '../ViewUtils'
 
 const WAIT_INTERVAL = 500
-const INSTANCE_WAIT = 100
 const ENTER_KEY = 13
 
-class InstanceView extends Component {
+class RegionView extends Component {
   state = {
     items: [],
     paging: {
@@ -42,31 +40,23 @@ class InstanceView extends Component {
       pageSize: 10
     },
     search: {
-      keyword: this.props.match.params.uuid || ''
-      // filters: [{ column: 'active', value: true }]
+      keyword: this.props.match.params.uuid || '',
+      filters: [{ column: 'active', value: true }]
     },
     loading: false,
     // isShowingItemModal: false,
     // isShowingFilterModal: false,
-    activeItem: {},
-    // mode: ViewMode.VIEW,
-    imageId: null,
-    instanceWait: false
+    activeItem: {}
+    // mode: ViewMode.VIEW
   }
   timer = null
 
   componentDidMount = () => this.search()
 
-  redirectToRegions = () => {
-    const { history } = this.props
-    const { imageId } = this.state
-    history.push('/region/' + (imageId !== '' ? imageId.substr(7) : ''))
-  }
-
   search = () => {
     const { search, paging } = this.state
     this.setState({ loading: true })
-    ThumbnailModel.getThumbnails(search, paging)
+    RegionModel.getRegions(search, paging)
       .then(result => this.setState({ items: result, loading: false }))
       .catch(err => this.alertModelError(err))
   }
@@ -122,16 +112,6 @@ class InstanceView extends Component {
     console.error({ code, routine, hint, ...rest })
   }
 
-  alertNoInstanceSelected() {
-    Alert.warning(
-      `<b>no instance selected.</b> Select an instance before using any tool`,
-      {
-        timeout: 2000,
-        html: true
-      }
-    )
-  }
-
   // itemModalCallback = ({ action, uuid, success }) => {
   //   this.setState({
   //     isShowingItemModal: false,
@@ -155,12 +135,10 @@ class InstanceView extends Component {
       items,
       search,
       loading,
-      paging,
+      paging
       // isShowingItemModal,
       // mode,
-      // activeItem,
-      imageId,
-      instanceWait
+      // activeItem
     } = this.state
     return (
       <ViewSplit>
@@ -197,21 +175,7 @@ class InstanceView extends Component {
           {loading ? (
             <LoadingIndicator />
           ) : (
-            <ViewSplit className="instance">
-              <ItemList items={items} self={this} />
-              {!imageId ? (
-                <NoInstanceSelected />
-              ) : instanceWait ? (
-                <LoadingIndicator />
-              ) : (
-                <CornerstoneElement
-                  imageId={imageId}
-                  ref={instance => {
-                    this.cornerstoneChild = instance
-                  }}
-                />
-              )}
-            </ViewSplit>
+            <ItemList items={items} self={this} />
           )}
           <PaginationArea>
             <Pagination
@@ -227,43 +191,27 @@ class InstanceView extends Component {
             />
           </PaginationArea>
         </Panel>
-        <InstanceDock
-          onVFlipHandler={() => {
-            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
-            this.cornerstoneChild.vFlipHandler()
-          }}
-          onHFlipHandler={() => {
-            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
-            this.cornerstoneChild.hFlipHandler()
-          }}
-          onLRotateHandler={() => {
-            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
-            this.cornerstoneChild.lRotateHandler()
-          }}
-          onRRotateHandler={() => {
-            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
-            this.cornerstoneChild.rRotateHandler()
-          }}
-          onInvertHandler={() => {
-            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
-            this.cornerstoneChild.invertHandler()
-          }}
-          onRegionsHandler={() => {
-            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
-            this.redirectToRegions()
-          }}
-        />
+        {/* <ViewDock
+          onAddClick={() =>
+            this.setState({
+              isShowingItemModal: true,
+              mode: ViewMode.ADD,
+              activeItem: {}
+            })
+          }
+          onFilterClick={() => this.setState({ isShowingFilterModal: true })}
+        /> */}
       </ViewSplit>
     )
   }
 }
 
-export default InstanceView
+export default RegionView
 
 const ItemList = ({ items, self }) => (
-  <ItemContainer className="instance">
+  <ItemContainer>
     {items.length > 0 ? (
-      items.map(item => <Item data={item} key={item.uuid} self={self} />)
+      items.map((item, index) => <Item data={item} key={index} self={self} />)
     ) : (
       <NoResultsFound />
     )}
@@ -271,30 +219,48 @@ const ItemList = ({ items, self }) => (
 )
 
 const Item = ({
-  data: { uuid, series_uuid, thumbnail_uri, created_at },
+  data: {
+    instance_uuid,
+    method,
+    props,
+    category,
+    created_at,
+    label,
+    area,
+    centroid,
+    perimeter,
+    solidity,
+    eccentricity,
+    convex_area,
+    circularity,
+    orientation,
+    bbox
+  },
   data,
   self
 }) => (
-  <ItemDiv className="instance">
-    <div style={{ flex: 3, textAlign: 'center', paddingTop: '25px' }}>
-      <img
-        width="170px"
-        src={thumbnail_uri}
-        onClick={() => {
-          self.setState({
-            imageId: 'pgcv://' + uuid,
-            instanceWait: true
-          })
-          setTimeout(() => {
-            self.setState({
-              instanceWait: false
-            })
-          }, INSTANCE_WAIT)
-        }}
-        alt={uuid}
-      />
-      <p className="uuid">{uuid}</p>
+  <ItemDiv>
+    <div style={{ flex: 3 }}>
+      <h2>
+        {method} {`( label ${label} )`}
+      </h2>
+      <p className="uuid">Instance: {instance_uuid}</p>
     </div>
+    <Meta className="narrow" color="#add1d1" flex="1">
+      <div>Area:</div> <div>{area}</div>
+    </Meta>
+    <Meta className="narrow" color="#adb4d1" flex="1">
+      <div>Perimeter:</div> <div>{Math.round(perimeter)}</div>
+    </Meta>
+    <Meta className="narrow" color="#d1add0" flex="1">
+      <div>Solity:</div> <div>{solidity.toFixed(4)}</div>
+    </Meta>
+    <Meta className="narrow" color="#add1d1" flex="1">
+      <div>Centroid:</div>
+      <div>
+        ({Math.round(centroid[0])}, {Math.round(centroid[1])})
+      </div>
+    </Meta>
   </ItemDiv>
 )
 
@@ -306,17 +272,6 @@ const NoResultsFound = () => (
       style={{ color: '#82d8d8' }}
     />
     <h1>No results found</h1>
-  </CenteredContainer>
-)
-
-const NoInstanceSelected = () => (
-  <CenteredContainer>
-    <FontAwesomeIcon
-      icon={faHandPointer}
-      size="4x"
-      style={{ color: '#82d8d8' }}
-    />
-    <h1>No instance selected</h1>
   </CenteredContainer>
 )
 

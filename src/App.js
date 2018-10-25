@@ -14,8 +14,7 @@ import SeriesView from './components/views/SeriesView'
 import ProtectedRoute from './components/ProtectedRoute'
 import SettingsView from './components/views/SettingsView'
 import InstanceView from './components/views/InstanceView'
-
-const Region = () => <div>Region</div>
+import RegionView from './components/views/RegionView'
 
 class App extends Component {
   render() {
@@ -60,7 +59,11 @@ const Routes = () => (
         component={InstanceView}
         title="Instance"
       />
-      <ProtectedRoute path="/region/:uuid?" component={Region} title="Region" />
+      <ProtectedRoute
+        path="/region/:uuid?"
+        component={RegionView}
+        title="Region"
+      />
       <Route path="/settings" component={SettingsView} />
     </Switch>
   </View>

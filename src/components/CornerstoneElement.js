@@ -58,6 +58,7 @@ class CornerstoneElement extends Component {
     this.onImageRendered = this.onImageRendered.bind(this)
     this.onNewImage = this.onNewImage.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
+    this.vFlipHandler = this.vFlipHandler.bind(this)
   }
 
   render() {
@@ -145,6 +146,46 @@ class CornerstoneElement extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!this.element) return
+  }
+
+  vFlipHandler() {
+    if (!this.element) return
+
+    const viewport = cornerstone.getViewport(this.element)
+    viewport.vflip = !viewport.vflip
+    cornerstone.setViewport(this.element, viewport)
+  }
+
+  hFlipHandler() {
+    if (!this.element) return
+
+    const viewport = cornerstone.getViewport(this.element)
+    viewport.hflip = !viewport.hflip
+    cornerstone.setViewport(this.element, viewport)
+  }
+
+  lRotateHandler() {
+    if (!this.element) return
+
+    const viewport = cornerstone.getViewport(this.element)
+    viewport.rotation -= 90
+    cornerstone.setViewport(this.element, viewport)
+  }
+
+  rRotateHandler() {
+    if (!this.element) return
+
+    const viewport = cornerstone.getViewport(this.element)
+    viewport.rotation += 90
+    cornerstone.setViewport(this.element, viewport)
+  }
+
+  invertHandler() {
+    if (!this.element) return
+
+    const viewport = cornerstone.getViewport(this.element)
+    viewport.invert = !viewport.invert
+    cornerstone.setViewport(this.element, viewport)
   }
 }
 

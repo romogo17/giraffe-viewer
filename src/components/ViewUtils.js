@@ -127,6 +127,10 @@ export const Meta = styled.div`
   justify-content: center;
   margin: 1rem 5%;
 
+  &.narrow {
+    margin: 1rem 2%;
+  }
+
   border: solid 1px ${props => props.color};
   color: ${props => props.color};
   border-radius: 0.7rem;
