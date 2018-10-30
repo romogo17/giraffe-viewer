@@ -60,7 +60,12 @@ class InstanceView extends Component {
   redirectToRegions = () => {
     const { history } = this.props
     const { imageId } = this.state
-    history.push('/region/' + (imageId !== '' ? imageId.substr(7) : ''))
+    history.push(
+      '/region/' +
+        (!imageId.includes('segmented')
+          ? imageId.substr(7)
+          : imageId.substr(17))
+    )
   }
 
   search = () => {
@@ -249,6 +254,18 @@ class InstanceView extends Component {
             this.cornerstoneChild.invertHandler()
           }}
           onRegionsHandler={() => {
+            if (!imageId || instanceWait) return this.alertNoInstanceSelected()
+            this.setState({
+              imageId: 'pgcv_segmented://' + imageId.substr(7),
+              instanceWait: true
+            })
+            setTimeout(() => {
+              this.setState({
+                instanceWait: false
+              })
+            }, INSTANCE_WAIT)
+          }}
+          onListHandler={() => {
             if (!imageId || instanceWait) return this.alertNoInstanceSelected()
             this.redirectToRegions()
           }}

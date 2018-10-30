@@ -22,6 +22,21 @@ const InstanceModel = {
       promise,
       cancelFn: undefined
     }
+  },
+  // Loads an image given an instance uuid
+  loadImageSegmented(imageId) {
+    console.log('FiringUP')
+    const promise = new Promise((resolve, reject) => {
+      fetchInstanceSegmented(imageId.substr(17)).then(instance => {
+        const imageObject = createImage(instance)
+        resolve(imageObject)
+      }, reject)
+    })
+
+    return {
+      promise,
+      cancelFn: undefined
+    }
   }
 }
 
@@ -78,5 +93,19 @@ function fetchInstance(key = '') {
       console.log('MODEL: Returning value for key', result)
       console.log('________________________________________________________')
       return result
+    })
+}
+
+function fetchInstanceSegmented(key = '') {
+  console.log('MODEL: Key I need to fetch', key)
+  console.log('ola ke ase')
+  return knex
+    .raw(
+      `select shape, data, uuid from pgcv_bundle.mam_segment((select image from med_img.instance where uuid = '${key}')), med_img.instance where uuid = '${key}'`
+    )
+    .then(result => {
+      console.log('MODEL: Returning value for key', result)
+      console.log('________________________________________________________')
+      return result.rows[0]
     })
 }

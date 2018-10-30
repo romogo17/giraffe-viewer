@@ -9,7 +9,8 @@ import {
   faRedo,
   faUndo,
   faAdjust,
-  faShapes
+  faShapes,
+  faList
 } from '@fortawesome/free-solid-svg-icons'
 
 const vFlip = {
@@ -45,6 +46,12 @@ const invert = {
 const regions = {
   title: 'Regions',
   icon: faShapes,
+  handler: () => console.log('Not implemented handler for filter option')
+}
+
+const list = {
+  title: 'List of Objects',
+  icon: faList,
   handler: () => console.log('Not implemented handler for filter option')
 }
 
@@ -93,6 +100,13 @@ class ViewDock extends Component {
           onClick={this.props.onRegionsHandler || regions.handler}
         >
           <FontAwesomeIcon icon={regions.icon} size="2x" />
+        </MenuButton>
+        <MenuButton
+          key={list.title}
+          title={list.title}
+          onClick={this.props.onListHandler || list.handler}
+        >
+          <FontAwesomeIcon icon={list.icon} size="2x" />
         </MenuButton>
       </Div>
     )

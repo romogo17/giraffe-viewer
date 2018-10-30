@@ -9,6 +9,10 @@ cornerstoneTools.external.cornerstone = cornerstone
 cornerstoneTools.external.cornerstoneMath = cornerstoneMath
 cornerstoneWebImageLoader.external.cornerstone = cornerstone
 cornerstone.registerImageLoader('pgcv', InstanceModel.loadImage)
+cornerstone.registerImageLoader(
+  'pgcv_segmented',
+  InstanceModel.loadImageSegmented
+)
 
 const containerStyle = {
   flex: '1',

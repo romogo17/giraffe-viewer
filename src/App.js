@@ -20,7 +20,7 @@ class App extends Component {
   render() {
     return (
       <AppWrap className="app">
-        <Titlebar>Giraffe Viewer</Titlebar>
+        <Titlebar>UNApacs viewer</Titlebar>
         <Split>
           <Dock />
           <Routes />

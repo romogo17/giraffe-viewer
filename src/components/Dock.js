@@ -26,6 +26,7 @@ class Dock extends Component {
   render() {
     return (
       <Div>
+        <BrandButton />
         {routes.map((r, index) => (
           <NavLink to={r.route} key={r.title}>
             <MenuButton key={r.title} title={r.title}>
@@ -65,4 +66,22 @@ const MenuButton = styled.button`
     opacity: 1;
     border-left: solid 4px #82d8d8;
   }
+`
+
+const BrandButton = styled.button`
+  width: 100%;
+  height: 50px;
+
+  background: #0f1419;
+  background-image: url('./unapacs.png');
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  /* opacity: 0.2; */
+  color: white;
+  outline: 0;
+
+  border: none;
+  border-bottom: solid 1px #4e5966;
+  text-align: center;
 `
